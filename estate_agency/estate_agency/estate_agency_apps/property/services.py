@@ -19,3 +19,17 @@ class PropertyService:
 
     def delete_object(self, property_id):
         self.repository.delete_object(property_id)
+
+class PropertyCategoryService:
+
+    def __init__(self, repository):
+        self.repository = repository
+    def list_objects(self):
+        return self.repository.list_objects()
+
+class PropertyTypeService:
+
+    def __init__(self, repository):
+        self.repository = repository
+    def list_objects(self):
+        return self.repository.list_objects()

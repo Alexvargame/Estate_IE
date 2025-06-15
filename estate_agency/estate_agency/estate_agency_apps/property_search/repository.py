@@ -6,6 +6,9 @@ from estate_agency.estate_agency_apps.dtos.property_search.response_dto import P
 from estate_agency.estate_agency_apps.property.models import (PropertyType, PropertyCategory,
                                                             RepairState, BuildingType,
                                                             District, Property)
+from estate_agency.estate_agency_apps.property_search.dictionarys import function_dict
+
+from estate_agency.estate_agency_apps.property_search.selectors import search_propertys
 
 class PropertySearchRepository:
     model = PropertySearchRequest
@@ -65,35 +68,48 @@ class PropertySearchRepository:
         )
         return dto
 
-    # def list_objects(self):
-    #     lst_dto = []
-    #     for obj in property_list(filters=None):
-    #         tmp_dto = PropertyDTO(
-    #             id=obj.id,
-    #             title=obj.title,
-    #             description=obj.description,
-    #             property_type=obj.property_type,
-    #             property_category=obj.property_category,
-    #             price=obj.price,
-    #             district=obj.district,
-    #             address=obj.address,
-    #             total_area=obj.total_area,
-    #             living_area=obj.living_area,
-    #             rooms_count=obj.rooms_count,
-    #             floor=obj.floor,
-    #             total_floor=obj.total_floor,
-    #             building_type=obj.building_type,
-    #             has_balcony=obj.has_balcony,
-    #             repair_state=obj.repair_state,
-    #             infrastructure=obj.infrastructure,
-    #             is_active=obj.is_active,
-    #             employee=obj.employee,
-    #             created_at=obj.created_at,
-    #             updated_at=obj.updated_at,
-    #         )
-    #         lst_dto.append(tmp_dto)
-    #     return lst_dto
-    #
+    def list_objects(self):
+        lst_dto = []
+        for obj in property_search_list(filters=None):
+            tmp_dto = PropertySearchDTO(
+                id=obj.id,
+                user=obj.user,
+                title=obj.title,
+                property_type=list(obj.property_type.all()),
+                property_category=list(obj.property_category.all()),
+                min_price=obj.min_price,
+                max_price=obj.max_price,
+                district=list(obj.district.all()),
+                min_total_area=obj.max_total_area,
+                max_total_area=obj.max_total_area,
+                min_rooms_count=obj.min_rooms_count,
+                max_rooms_count=obj.max_rooms_count,
+                min_total_floors=obj.min_total_floors,
+                max_total_floors=obj.max_total_floors,
+                building_type=list(obj.building_type.all()),
+                has_balcony=obj.has_balcony,
+                repair_state=list(obj.repair_state.all()),
+                min_created_at=obj.min_created_at,
+                max_created_at=obj.max_created_at,
+            )
+            lst_dto.append(tmp_dto)
+        return lst_dto
+
+    def statistic_objects(self, dto):
+
+        statistic_dict = {}
+        for k, v in dto.__dict__.items():
+            if k != 'date_from' and k != 'date_to' and dto.__dict__[k]:
+                statistic_dict[k] = function_dict[k]#property_search_get_statistic_property_type()
+            elif k == 'date_from' or k == 'date_to':
+                statistic_dict[k] = v
+        return statistic_dict
+
+    def search_propertys(self, dto):
+        search_result = search_propertys(dto)
+        return search_result
+
+
     # @transaction.atomic
     # def update_object(self, dto):
     #     property = self.model.objects.get(id=dto.id)

@@ -31,5 +31,16 @@ class PropertySearchDTO:
     min_created_at: str
     max_created_at: str
 
-
+@dataclass
+class PropertySearchStatisticDTO:
+    property_type: bool
+    property_category: bool
+    price: bool
+    district: bool
+    area: bool
+    rooms_count: bool
+    # building_type: List[BuildingType]
+    repair_state: bool
+    date_from: str
+    date_to: str
 

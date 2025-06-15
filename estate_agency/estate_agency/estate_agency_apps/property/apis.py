@@ -2,6 +2,8 @@ from django.http import Http404
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 from estate_agency.estate_agency_apps.api.pagination import (
     LimitOffsetPagination,
@@ -25,7 +27,7 @@ from estate_agency.estate_agency_apps.property.models import (PropertyType, Prop
                                                             RepairState, BuildingType,
                                                             District)
 from estate_agency.estate_agency_apps.users.models import BaseUser
-class PropertyCreateApi(LimitOffsetPagination, APIView):
+class PropertyCreateApi(LoginRequiredMixin, LimitOffsetPagination, APIView):
     class InputSerializer(serializers.Serializer):
         title = serializers.CharField()
         description = serializers.CharField()
@@ -50,8 +52,6 @@ class PropertyCreateApi(LimitOffsetPagination, APIView):
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print('11', serializer.validated_data)
-
         property_type = property_type_get(serializer.validated_data['property_type'])
         serializer.validated_data['property_type'] = property_type
         property_category = property_category_get(serializer.validated_data['property_category'])
@@ -62,8 +62,6 @@ class PropertyCreateApi(LimitOffsetPagination, APIView):
         serializer.validated_data['building_type'] = building_type
         repair_state = repair_state_get(serializer.validated_data['repair_state'])
         serializer.validated_data['repair_state'] = repair_state
-
-        print('22', serializer.validated_data)
         employee = user_get(serializer.validated_data['employee'])
         serializer.validated_data['employee'] = employee
 
@@ -74,7 +72,7 @@ class PropertyCreateApi(LimitOffsetPagination, APIView):
         data = PropertyDetailApi.OutputSerializer(property).data
         return Response(data)
 
-class PropertyDetailApi(LimitOffsetPagination, APIView):
+class PropertyDetailApi(LoginRequiredMixin, LimitOffsetPagination, APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         title = serializers.CharField()
@@ -106,7 +104,7 @@ class PropertyDetailApi(LimitOffsetPagination, APIView):
         return Response(data)
 
 
-class PropertyListApi(LimitOffsetPagination, APIView):
+class PropertyListApi(LoginRequiredMixin, LimitOffsetPagination, APIView):
 
     class Pagination(LimitOffsetPagination):
         default_limit = 2
@@ -138,7 +136,7 @@ class PropertyListApi(LimitOffsetPagination, APIView):
         )
 
 
-class PropertyUpdateApi(LimitOffsetPagination, APIView):
+class PropertyUpdateApi(LoginRequiredMixin, LimitOffsetPagination, APIView):
     class InputSerializer(serializers.Serializer):
         title = serializers.CharField()
         description = serializers.CharField()
@@ -175,7 +173,7 @@ class PropertyUpdateApi(LimitOffsetPagination, APIView):
         data = PropertyDetailApi.OutputSerializer(property).data
         return Response(data)
 
-class PropertyDeleteApi(LimitOffsetPagination, APIView):
+class PropertyDeleteApi(LoginRequiredMixin, LimitOffsetPagination, APIView):
     class InputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
     class Pagination(LimitOffsetPagination):

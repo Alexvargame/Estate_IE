@@ -4,7 +4,7 @@ from django.db import models
 
 from estate_agency.estate_agency_apps.common.models import BaseModel, UserRole
 
-DEFAULT_USER_ROLE = 1
+DEFAULT_USER_ROLE = 2
 DEFAULT_USER_ADMIN_ROLE = 4
 class BaseUserManager(BUM):
     def create_user(self, email, is_active=True, user_role=DEFAULT_USER_ROLE, is_admin=False, username=None,
@@ -38,8 +38,10 @@ class BaseUserManager(BUM):
             is_active=True,
             user_role=DEFAULT_USER_ADMIN_ROLE,
             password=password,
+
         )
-        user.is_admin=True
+        user.is_admin = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
 
@@ -57,7 +59,9 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     last_login_date = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    user_role = models.ForeignKey(UserRole, related_name='user_role', on_delete=models.CASCADE, default=1)
+    user_role = models.ForeignKey(UserRole, related_name='user_role', on_delete=models.CASCADE, default=4)
+    user_bot_id = models.IntegerField(blank=True, null=True, default=0)
+    user_bot_pass = models.CharField(max_length=100, blank=True, null=True, default='')
 
     groups = models.ManyToManyField(
         Group,
@@ -82,8 +86,9 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+    @property
     def is_staff(self):
-        return True if self.user_role.id == 4 else False
+        return self.is_admin#True if self.user_role.id == 4 else False
 
 
 

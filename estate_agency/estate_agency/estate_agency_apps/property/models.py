@@ -5,6 +5,9 @@ class PropertyType(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.TextField()
+    transcription = models.CharField(max_length=100, default='')
+    #description = models.CharField(max_length=100, default='')
+
 
     class Meta:
         verbose_name = 'Тип объекта недвижимости'
@@ -17,6 +20,7 @@ class PropertyCategory(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.TextField()
+    transcription = models.CharField(max_length=100, default='')
 
     class Meta:
         verbose_name = 'Категория объекта недвижимости'
@@ -30,10 +34,12 @@ class City(models.Model):
     name = models.CharField(max_length=100)
     region = models.CharField(max_length=100)
     description = models.TextField()
+    transcription = models.CharField(max_length=100, default='')
 
     class Meta:
         verbose_name = 'Населенный пункт'
         verbose_name_plural = 'Населенные пункты'
+
 
     def __str__(self):
         return f'{self.name}:{self.region}'
@@ -43,6 +49,8 @@ class District(models.Model):
     name = models.CharField(max_length=100)
     city = models.ForeignKey(City, related_name='districts', on_delete=models.CASCADE)
     description = models.TextField()
+    transcription = models.CharField(max_length=100, default='')
+
 
     class Meta:
         verbose_name = 'Район города'
@@ -55,6 +63,8 @@ class BuildingType(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.TextField()
+    transcription = models.CharField(max_length=100, default='')
+
 
     class Meta:
         verbose_name = 'Тип материалов дома'
@@ -67,6 +77,8 @@ class RepairState(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.TextField()
+    transcription = models.CharField(max_length=100, default='')
+
 
     class Meta:
         verbose_name = 'Состояние ремонта'
@@ -78,7 +90,7 @@ class RepairState(models.Model):
 class Property(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    property_type = models.ForeignKey(PropertyType, related_name='property_types', on_delete=models.CASCADE)
+    property_type = models.ForeignKey(PropertyType, related_name='property_types', on_delete=models.CASCADE, default=1)
     property_category = models.ForeignKey(PropertyCategory, related_name='property_categories', on_delete=models.CASCADE)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     district = models.ForeignKey(District, related_name='districts', on_delete=models.CASCADE)

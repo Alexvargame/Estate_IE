@@ -12,10 +12,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from estate_agency.config.env import BASE_DIR, APPS_DIR
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+print('BASEDIR', BASE_DIR)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -31,6 +32,7 @@ LOCAL_APPS = [
     'estate_agency.estate_agency_apps.users.apps.UsersConfig',
     'estate_agency.estate_agency_apps.property.apps.PropertyConfig',
     'estate_agency.estate_agency_apps.property_search.apps.PropertySearchConfig',
+    'estate_agency.estate_agency_apps.clients.apps.ClientsConfig',
 
 ]
 
@@ -89,7 +91,7 @@ WSGI_APPLICATION = 'estate_agency.config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db_base.sqlite3',
     }
 }
 

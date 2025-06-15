@@ -1,9 +1,21 @@
 from django.db import transaction
 
-from estate_agency.estate_agency_apps.property.models import Property
+import os
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'estate_agency.config.django.base')
+django.setup()
+
+from estate_agency.estate_agency_apps.property.models import (Property, PropertyType,
+                                                            PropertyCategory,
+                                                              )
 
 from estate_agency.estate_agency_apps.dtos.property.response_dto import PropertyDTO
-from estate_agency.estate_agency_apps.property.selectors import property_list
+from estate_agency.estate_agency_apps.dtos.property_types.response_dto import PropertyTypesDTO
+from estate_agency.estate_agency_apps.dtos.property_category.response_dto import PropertyCategoryDTO
+from estate_agency.estate_agency_apps.property.selectors import (property_list, property_type_list,
+                                                                property_category_list,
+                                                                 )
 
 class PropertyRepository:
     model = Property
@@ -100,3 +112,34 @@ class PropertyRepository:
     def delete_object(self, property_id):
         property = self.model.objects.get(id=property_id)
         property.delete()
+
+class PropertyTypeRepository:
+    model = PropertyType
+
+    def list_objects(self):
+        dto_list = []
+        for obj in property_type_list(filters=None):
+            tmp_dto = PropertyTypesDTO(
+                id=obj.id,
+                name=obj.name,
+                description=obj.description,
+                transcription=obj.transcription
+            )
+            dto_list.append(tmp_dto)
+        return dto_list
+
+class PropertyCategoryRepository:
+    model = PropertyCategory
+
+    def list_objects(self):
+        dto_list = []
+        for obj in property_category_list(filters=None):
+            print([p.transcription for p in property_category_list()])
+            tmp_dto = PropertyCategoryDTO(
+                id=obj.id,
+                name=obj.name,
+                description=obj.description,
+                transcription=obj.transcription
+            )
+            dto_list.append(tmp_dto)
+        return dto_list
