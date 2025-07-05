@@ -17,6 +17,7 @@ from estate_agency.config.env import BASE_DIR, APPS_DIR
 # BASE_DIR = Path(__file__).resolve().parent.parent
 
 print('BASEDIR', BASE_DIR)
+print('APPSDIR', APPS_DIR)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     *LOCAL_APPS,
     *THIRD_PARTY_APPS,
 ]

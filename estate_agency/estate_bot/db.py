@@ -23,12 +23,36 @@ class BotDBClass:
         return self.cursor.execute('select username from users_baseuser where user_bot_id=?', (user_bot_id,)).fetchone()[0]
     def get_types(self):
         return self.cursor.execute('select name from property_propertytype').fetchall()
+    # def get_property_type(self, transcription):
+    #     return self.cursor.execute('select * from property_propertytype where transcription=?', (transcription,)).fetchall()[0]
+    # def get_property_category(self, transcription):
+    #     return self.cursor.execute('select * from property_propertycategory where transcription=?', (transcription,)).fetchall()[0]
+    # def get_property_district(self, transcription):
+    #     return self.cursor.execute('select * from property_district where transcription=?', (transcription,)).fetchall()[0]
+    # def get_proprty_repair_state(self, transcription):
+    #     return self.cursor.execute('select * from property_repairstate where transcription=?', (transcription,)).fetchall()[0]
+    #
+    # def get_proprty_building_type(self, transcription):
+    #     return self.cursor.execute('select * from property_buildingtype where transcription=?', (transcription,)).fetchall()[0]
     def get_user_id(self, user_bot_id):
         return self.cursor.execute('select id from users_baseuser where user_bot_id=?', (user_bot_id,)).fetchone()[0]
-    def get_all_flats_for_user(self, user_bot_id):
+    def get_user(self, user_bot_id):
+        return self.cursor.execute('select * from users_baseuser where user_bot_id=?',
+                                   (user_bot_id,)).fetchone()[0]
+    def get_property_type_id(self, name):
+        return self.cursor.execute('select id from property_propertytype where name=?',
+                                   (name,)).fetchone()[0]
+    def get_all_flats_for_user(self, user_bot_id, type_name):
+        print(type_name)
         user_id = self.get_user_id(user_bot_id)
-        flats = self.cursor.execute('select * from property_property where employee_id=?', (user_id,)).fetchall()
+        property_type_id = self.get_property_type_id(type_name)
+        print(property_type_id, user_id)
+        flats = self.cursor.execute('select * from property_property where employee_id=? and property_type_id=?',
+                                    (user_id, property_type_id)).fetchall()
         return flats
+
+
+    #def create_new_object(self, data):
     #
     # def get_user_id_by_username(self,username):
     #     return self.cursor.execute('select id from auth_user where username=?', (username,)).fetchone()[0]
@@ -60,7 +84,8 @@ class BotDBClass:
     #         return self.cursor.execute("update  users_profile set user_bot_id=?, user_bot_pass=? where user_id =?", (user_bot_id,user_bot_pass,user_id,))
     #
     # def get_deliveres_on_work(self,user_id):
-    #     return self.cursor.execute('select * from order_order where deliver_id=? and delivery_status="on_work"',(user_id,)).fetchall()
+    #     return self.cursor.execute('select * from order_order where deliver_id=? and delivery_status="on_work"',
+    #     (user_id,)).fetchall()
     #
     # def check_deliveres_on_waitnig(self,user_id):
     #     dat=datetime.now()

@@ -42,7 +42,6 @@ class PropertyCreateApi(LoginRequiredMixin, LimitOffsetPagination, APIView):
         floor = serializers.IntegerField(allow_null=True, required=False)
         total_floor = serializers.IntegerField(allow_null=True,  required=False)
         building_type = serializers.CharField(allow_null=True,  required=False)
-        has_balcony = serializers.IntegerField(allow_null=True, default=0 )
         repair_state = serializers.CharField(allow_null=True, required=False)
         infrastructure = serializers.CharField(allow_null=True, required=False)
         is_active = serializers.BooleanField(default=1)
@@ -88,7 +87,6 @@ class PropertyDetailApi(LoginRequiredMixin, LimitOffsetPagination, APIView):
         floor = serializers.IntegerField()
         total_floor = serializers.IntegerField()
         building_type = serializers.CharField()
-        has_balcony = serializers.IntegerField()
         repair_state = serializers.CharField()
         infrastructure = serializers.CharField()
         is_active = serializers.BooleanField()
@@ -120,7 +118,7 @@ class PropertyListApi(LoginRequiredMixin, LimitOffsetPagination, APIView):
             model = Property
             fields = ('id', 'title', 'description', 'property_type', 'property_category',
                 'district', 'address' , 'total_area', 'living_area', 'rooms_count',
-                'floor', 'total_floor', 'building_type', 'has_balcony', 'repair_state', 'infrastructure',
+                'floor', 'total_floor', 'building_type', 'repair_state', 'infrastructure',
                 'created_at', 'updated_at', 'is_active' , 'employee')
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
@@ -151,7 +149,6 @@ class PropertyUpdateApi(LoginRequiredMixin, LimitOffsetPagination, APIView):
         floor = serializers.IntegerField(allow_null=True, required=False)
         total_floor = serializers.IntegerField(allow_null=True, required=False)
         building_type = serializers.CharField(allow_null=True, required=False)
-        has_balcony = serializers.IntegerField(allow_null=True, default=0)
         repair_state = serializers.CharField(allow_null=True, required=False)
         infrastructure = serializers.CharField(allow_null=True, required=False)
         is_active = serializers.BooleanField(default=1)

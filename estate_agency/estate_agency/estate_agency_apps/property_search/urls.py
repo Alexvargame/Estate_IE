@@ -4,6 +4,7 @@ from .apis import (PropertySearchDetailApi, PropertySearchCreateApi,
                     PropertySearchListApi, PropertySearchStatisticApi
 
                    )
+app_name = 'property_searches'
 
 urlpatterns =[
     path('create/', PropertySearchCreateApi.as_view(), name='property_search_create'),

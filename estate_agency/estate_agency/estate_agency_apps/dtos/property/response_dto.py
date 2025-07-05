@@ -25,7 +25,6 @@ class PropertyDTO:
     floor: int
     total_floor: int
     building_type: BuildingType
-    has_balcony: int
     repair_state: RepairState
     infrastructure: str
     is_active: int

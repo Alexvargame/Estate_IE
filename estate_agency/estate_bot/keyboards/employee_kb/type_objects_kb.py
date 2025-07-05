@@ -13,7 +13,6 @@ class EmployeeObjectsAction(Enum):
     flats = 'flats'
     house = 'houses'
     cancel = 'cancel'
-    all = 'all'
     search = 'search'
 
 
@@ -37,10 +36,6 @@ def build_employee_type_objects_kb():
         text="🖼 Дома",
         callback_data=EmployeeObjects(action=EmployeeObjectsAction.house).pack()
     )
-    all = InlineKeyboardButton(
-        text='Все',
-        callback_data=EmployeeObjects(action=EmployeeObjectsAction.all).pack()
-    )
     search = InlineKeyboardButton(
         text='Поиск',
         callback_data=EmployeeObjects(action=EmployeeObjectsAction.search).pack()
@@ -51,13 +46,12 @@ def build_employee_type_objects_kb():
 
     )
 
-    add_new = [add_new]
-    first_line = [flats, houeses]
-    second_line = [all]
+    first_line = [add_new]
+    second_line = [flats, houeses]
     third_line = [search]
     forth_line = [cancel]
     markup = InlineKeyboardMarkup(
-        inline_keyboard=[add_new, first_line, second_line, third_line, forth_line],
+        inline_keyboard=[first_line, second_line, third_line, forth_line],
         # resize_keyboard=True,
         # one_time_keyboard=True,
 

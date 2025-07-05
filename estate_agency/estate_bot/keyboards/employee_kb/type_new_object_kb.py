@@ -1,16 +1,29 @@
 from enum import Enum
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,)
 from aiogram.filters.callback_data import CallbackData
-
-from estate_agency.estate_agency_apps.property.services import PropertyTypeService, PropertyCategoryService
-from estate_agency.estate_agency_apps.property.repository import PropertyTypeRepository, PropertyCategoryRepository
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
+from estate_agency.estate_agency_apps.property.services import (PropertyTypeService, PropertyCategoryService,
+                                                                DistrictService, BuildingTypeService,
+                                                                RepairStateService, PropertyService)
+from estate_agency.estate_agency_apps.property.repository import (PropertyTypeRepository, PropertyCategoryRepository,
+                                                                DistrictRepository, RepairStateRepository,
+                                                                BuildingTypeRepository, PropertyRepository
+                                                                )
+from estate_bot.dictionaries import get_dictionary_object
 def create_enum_from_data(enum_name, data):
-    print(data)
     enum_members = {item.transcription: item.name for item in data}
     enum_members['cancel'] = 'Отмена'
-    print('ENMEM',enum_members)
+    return Enum(enum_name, enum_members)
+
+def create_enum_from_property(enum_name, data):
+    enum_members = {item.name: item.name for item in data}
+    enum_members.pop('id', None)
+    enum_members.pop('is_active', None)
+    enum_members.pop('created_at', None)
+    enum_members.pop('updated_at', None)
+    enum_members.pop('employee', None)
     return Enum(enum_name, enum_members)
 
 # Используем:
@@ -27,53 +40,34 @@ EmployeeTypeNewObjectsAction = create_enum_from_data("EmployeeTypeNewObjectsActi
 #     house = 'Дом'
 #     cancel = 'Отмена'
 
+
 class EmployeeTypeNewObjects(CallbackData, prefix='employee_type_new_objects'):
     action: EmployeeTypeNewObjectsAction
 
-# class EmployeeCategoryNewObjectsAction(Enum):
-#     # def __init__(self, data):
-#     #     for d in data:
-#     #         print(d.__name__)
-#     living = 'Жилая'
-#     prom = 'Промышленная'
-#     cancel = 'Отмена'
-#     society = 'Общественная'
+
 EmployeeCategoryNewObjectsAction = create_enum_from_data('EmployeeCategoryNewObjectsAction',
                                                          PropertyCategoryService(PropertyCategoryRepository()).list_objects())
 class EmployeeCategoryNewObjects(CallbackData, prefix='employee_category_new_objects'):
     action: EmployeeCategoryNewObjectsAction
 
-class EmployeeDistrictNewObjectsAction(Enum):
-    # def __init__(self, data):
-    #     for d in data:
-    #         print(d.__name__)
-    gsv = 'ГСВ'
-    cancel = 'Отмена'
+EmployeeDistrictNewObjectsAction = create_enum_from_data('EmployeeDistrictObjectsAction',
+                                                         DistrictService(DistrictRepository()).list_objects())
+
 class EmployeeDistrictNewObjects(CallbackData, prefix='employee_district_new_objects'):
     action: EmployeeDistrictNewObjectsAction
 
-class EmployeeBuildingTypeNewObjectsAction(Enum):
-    # def __init__(self, data):
-    #     for d in data:
-    #         print(d.__name__)
-    brick = 'Кирпич'
-    cancel = 'Отмена'
+EmployeeBuildingTypeNewObjectsAction = create_enum_from_data('EmployeeBuildingTypeNewObjectsAction',
+                                                             BuildingTypeService(BuildingTypeRepository()).list_objects())
+
 class EmployeeBuildingTypeNewObjects(CallbackData, prefix='employee_building_type_new_objects'):
     action: EmployeeBuildingTypeNewObjectsAction
 
-class EmployeeRepairStateNewObjectsAction(Enum):
-    # def __init__(self, data):
-    #     for d in data:
-    #         print(d.__name__)
-    euro = 'Евроремонт'
-    cancel = 'Отмена'
+EmployeeRepairStateNewObjectsAction = create_enum_from_data('EmployeeRepairStateNewObjectsAction',
+                                                            RepairStateService(RepairStateRepository()).list_objects())
 class EmployeeRepiarStateNewObjects(CallbackData, prefix='employee_repair_state_new_objects'):
     action: EmployeeRepairStateNewObjectsAction
 
 class EmployeeSaveOrNotNewObjectsAction(Enum):
-    # def __init__(self, data):
-    #     for d in data:
-    #         print(d.__name__)
     yes = 'Да'
     update = 'Исправить'
     cancel = 'Отмена'
@@ -81,140 +75,92 @@ class EmployeeSaveOrNotNewObjectsAction(Enum):
 class EmployeeSaveOrNotStateNewObjects(CallbackData, prefix='employee_save_or_not_new_objects'):
     action: EmployeeSaveOrNotNewObjectsAction
 
+EmployeeUpdateObjectAction = create_enum_from_property('EmployeeUpdateObjectAction',
+                                                       PropertyService(PropertyRepository()).get_fields())
+class EmployeeUpdateObject(CallbackData, prefix='employee_update_object'):
+    action: EmployeeUpdateObjectAction
+
 def build_employee_type_new_object_kb():
-    print('KWYBOARD_NEWTYPW_EMPLOYEE_OBJETCS')
-    print(EmployeeTypeNewObjects)
-    flat = InlineKeyboardButton(
-        text=EmployeeTypeNewObjectsAction.flat.value,
-        callback_data=EmployeeTypeNewObjects(action=EmployeeTypeNewObjectsAction.flat).pack()
-    )
-    house = InlineKeyboardButton(
-        text=EmployeeTypeNewObjectsAction.house.value,
-        callback_data=EmployeeTypeNewObjects(action=EmployeeTypeNewObjectsAction.house).pack()
-    )
+    builder = InlineKeyboardBuilder()
+    for key, value in EmployeeTypeNewObjectsAction._member_map_.items():
+        button = builder.button(
+            text=value.value,
+            callback_data=EmployeeTypeNewObjects(action=value).pack()
+        )
 
-    cancel = InlineKeyboardButton(
-        text=EmployeeTypeNewObjectsAction.cancel.value,
-        callback_data=EmployeeTypeNewObjects(action=EmployeeTypeNewObjectsAction.cancel).pack()
+    # flat = InlineKeyboardButton(
+    #     text=EmployeeTypeNewObjectsAction.flat.value,
+    #     callback_data=EmployeeTypeNewObjects(action=EmployeeTypeNewObjectsAction.flat).pack()
+    # )
+    # house = InlineKeyboardButton(
+    #     text=EmployeeTypeNewObjectsAction.house.value,
+    #     callback_data=EmployeeTypeNewObjects(action=EmployeeTypeNewObjectsAction.house).pack()
+    # )
 
-    )
+    # cancel = InlineKeyboardButton(
+    #     text=EmployeeTypeNewObjectsAction.cancel.value,
+    #     callback_data=EmployeeTypeNewObjects(action=EmployeeTypeNewObjectsAction.cancel).pack()
+    #
+    # )
+    # cancel = builder.button(
+    #     text=EmployeeTypeNewObjectsAction.cancel.value,
+    #     callback_data=EmployeeTypeNewObjects(action=EmployeeTypeNewObjectsAction.cancel).pack()
+    #
+    # )
 
-    first_line = [flat, house]
-    second_line = [cancel]
-    markup = InlineKeyboardMarkup(
-        inline_keyboard=[first_line, second_line],
-        # resize_keyboard=True,
-        # one_time_keyboard=True,
-
-    )
-    return markup
+    # first_line = list_button_menu#[flat, house]
+    # second_line = [cancel]
+    # markup = InlineKeyboardMarkup(
+    #     inline_keyboard=[first_line, second_line],
+    #     # resize_keyboard=True,
+    #     # one_time_keyboard=True,
+    #
+    # )
+    builder.adjust(3, 1)
+    return builder.as_markup()
 
 def build_employee_category_new_object_kb():
-    print('KWYBOARD_CAT_EMPLOYEE_OBJETCS')
+    builder = InlineKeyboardBuilder()
+    for key, value in EmployeeCategoryNewObjectsAction._member_map_.items():
+        button = builder.button(
+            text=value.value,
+            callback_data=EmployeeCategoryNewObjects(action=value).pack()
+        )
 
-    living = InlineKeyboardButton(
-        text=EmployeeCategoryNewObjectsAction.living.value,
-        callback_data=EmployeeCategoryNewObjects(action=EmployeeCategoryNewObjectsAction.living).pack()
-    )
-    prom = InlineKeyboardButton(
-        text=EmployeeCategoryNewObjectsAction.prom.value,
-        callback_data=EmployeeCategoryNewObjects(action=EmployeeCategoryNewObjectsAction.prom).pack()
-    )
-
-    cancel = InlineKeyboardButton(
-        text=EmployeeCategoryNewObjectsAction.cancel.value,
-        callback_data=EmployeeCategoryNewObjects(action=EmployeeCategoryNewObjectsAction.cancel).pack()
-
-    )
-    society = InlineKeyboardButton(
-        text=EmployeeCategoryNewObjectsAction.society.value,
-        callback_data=EmployeeCategoryNewObjects(action=EmployeeCategoryNewObjectsAction.society).pack()
-
-    )
-
-
-    first_line = [living, society]
-    second_line = [prom]
-    third_line = [cancel]
-    markup = InlineKeyboardMarkup(
-        inline_keyboard=[first_line, second_line, third_line],
-        # resize_keyboard=True,
-        # one_time_keyboard=True,
-
-    )
-    return markup
+    builder.adjust(3, 1)
+    return builder.as_markup()
 
 def build_employee_district_new_object_kb():
-    print('KWYBOARD_NEWTYPW_EMPLOYEE_OBJETCS')
-
-    gsv = InlineKeyboardButton(
-        text=EmployeeDistrictNewObjectsAction.gsv.value,
-        callback_data=EmployeeDistrictNewObjects(action=EmployeeDistrictNewObjectsAction.gsv).pack()
-    )
-
-    cancel = InlineKeyboardButton(
-        text=EmployeeCategoryNewObjectsAction.cancel.value,
-        callback_data=EmployeeDistrictNewObjects(action=EmployeeDistrictNewObjectsAction.cancel).pack()
-
-    )
-
-    first_line = [gsv]
-    second_line = [cancel]
-    markup = InlineKeyboardMarkup(
-        inline_keyboard=[first_line, second_line],
-        # resize_keyboard=True,
-        # one_time_keyboard=True,
-
-    )
-    return markup
+    builder = InlineKeyboardBuilder()
+    for key, value in EmployeeDistrictNewObjectsAction._member_map_.items():
+        button = builder.button(
+            text=value.value,
+            callback_data=EmployeeDistrictNewObjects(action=value).pack()
+        )
+    builder.adjust(3, 1)
+    return builder.as_markup()
 
 def build_employee_building_type_new_object_kb():
-    print('KWYBOARD_Building_EMPLOYEE_OBJETCS')
+    builder = InlineKeyboardBuilder()
+    for key, value in EmployeeBuildingTypeNewObjectsAction._member_map_.items():
+        button = builder.button(
+            text=value.value,
+            callback_data=EmployeeBuildingTypeNewObjects(action=value).pack()
+        )
 
-    brick = InlineKeyboardButton(
-        text=EmployeeBuildingTypeNewObjectsAction.brick.value,
-        callback_data=EmployeeBuildingTypeNewObjects(action=EmployeeBuildingTypeNewObjectsAction.brick).pack()
-    )
-
-    cancel = InlineKeyboardButton(
-        text=EmployeeBuildingTypeNewObjectsAction.cancel.value,
-        callback_data=EmployeeBuildingTypeNewObjects(action=EmployeeBuildingTypeNewObjectsAction.cancel).pack()
-
-    )
-
-    first_line = [brick]
-    second_line = [cancel]
-    markup = InlineKeyboardMarkup(
-        inline_keyboard=[first_line, second_line],
-        # resize_keyboard=True,
-        # one_time_keyboard=True,
-
-    )
-    return markup
+    builder.adjust(3, 1)
+    return builder.as_markup()
 
 def build_employee_repair_state_new_object_kb():
-    print('KWYBOARD_repaire_state_EMPLOYEE_OBJETCS')
+    builder = InlineKeyboardBuilder()
+    for key, value in EmployeeRepairStateNewObjectsAction._member_map_.items():
+        button = builder.button(
+            text=value.value,
+            callback_data=EmployeeRepiarStateNewObjects(action=value).pack()
+        )
 
-    euro = InlineKeyboardButton(
-        text=EmployeeRepairStateNewObjectsAction.euro.value,
-        callback_data=EmployeeRepiarStateNewObjects(action=EmployeeRepairStateNewObjectsAction.euro).pack()
-    )
-
-    cancel = InlineKeyboardButton(
-        text=EmployeeRepairStateNewObjectsAction.cancel.value,
-        callback_data=EmployeeRepiarStateNewObjects(action=EmployeeRepairStateNewObjectsAction.cancel).pack()
-
-    )
-
-    first_line = [euro]
-    second_line = [cancel]
-    markup = InlineKeyboardMarkup(
-        inline_keyboard=[first_line, second_line],
-        # resize_keyboard=True,
-        # one_time_keyboard=True,
-
-    )
-    return markup
+    builder.adjust(3, 1)
+    return builder.as_markup()
 
 def build_employee_save_or_not_new_object_kb():
     print('KWYBOARD_save_EMPLOYEE_OBJETCS')
@@ -224,8 +170,8 @@ def build_employee_save_or_not_new_object_kb():
         callback_data=EmployeeSaveOrNotStateNewObjects(action=EmployeeSaveOrNotNewObjectsAction.yes).pack()
     )
     update = InlineKeyboardButton(
-        text=EmployeeSaveOrNotNewObjectsAction.no.value,
-        callback_data=EmployeeSaveOrNotStateNewObjects(action=EmployeeSaveOrNotNewObjectsAction.no).pack()
+        text=EmployeeSaveOrNotNewObjectsAction.update.value,
+        callback_data=EmployeeSaveOrNotStateNewObjects(action=EmployeeSaveOrNotNewObjectsAction.update).pack()
     )
 
     cancel = InlineKeyboardButton(
@@ -243,3 +189,23 @@ def build_employee_save_or_not_new_object_kb():
 
     )
     return markup
+
+def build_update_new_object_kb():
+    builder = InlineKeyboardBuilder()
+    print(EmployeeUpdateObjectAction._member_map_.items())
+    verbose_names = {item.name: item.verbose_name for item in PropertyService(PropertyRepository()).get_fields()}
+    print('verb', verbose_names)
+    for key, value in EmployeeUpdateObjectAction._member_map_.items():
+        # cb_data = EmployeeUpdateObject(action=value.value).pack()
+        # print(f"Button: {verbose_names[value.value]} -> callback_data: {cb_data}")
+        # button = builder.button(
+        #     text=verbose_names[value.value],
+        #     callback_data=cb_data
+        # )
+        button = builder.button(
+            text=verbose_names[value.value],
+            callback_data=EmployeeUpdateObject(action=value.value).pack()
+        )
+
+    builder.adjust(4)
+    return builder.as_markup()

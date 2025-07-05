@@ -35,6 +35,6 @@ class RepairStateAdmin(admin.ModelAdmin):
 class PropertyAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'description', 'property_type', 'property_category',
     'district', 'address' ,'price', 'total_area', 'living_area', 'rooms_count',
-    'floor', 'total_floor', 'building_type', 'has_balcony', 'repair_state', 'infrastructure',
+    'floor', 'total_floor', 'building_type', 'repair_state', 'infrastructure',
     'created_at', 'updated_at', 'is_active' , 'employee')
 

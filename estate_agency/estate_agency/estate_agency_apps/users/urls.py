@@ -2,6 +2,7 @@ from django.urls import path
 
 from .apis import (UserCreateApi, UserDetailApi, UserListApi, UserUpdateApi)
 
+app_name = 'users'
 urlpatterns =[
     path('create/', UserCreateApi.as_view(), name='user_create'),
     path('<int:user_id>/', UserDetailApi.as_view(), name='user_detail'),

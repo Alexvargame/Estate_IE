@@ -11,7 +11,7 @@ from estate_bot.keyboards.employee_kb.type_objects_kb import EmployeeObjectsActi
 from estate_bot.keyboards.employee_kb.type_objects_kb import build_employee_type_objects_kb
 from estate_bot.keyboards.employee_kb.type_new_object_kb import build_employee_type_new_object_kb
 from estate_bot.keyboards.employee_kb.main_employee_kb import build_employee_kb
-
+from estate_bot.keyboards.employee_kb.flats_kb import build_flats_kb
 
 from estate_bot.routers.servey.states import OrderEmployeeObjects, OrderNewObject
 
@@ -40,7 +40,7 @@ async def get_main_menu_item(clbk: CallbackQuery, state: FSMContext):
 @router.callback_query(EmployeeObjects.filter(F.action == EmployeeObjectsAction.add_new))
 async def add_new_object(clbk: CallbackQuery, state: FSMContext):
     print('New object')
-
+    await clbk.message.delete()
     await clbk.message.answer(
         text=f"Выберите тип объекта:",
         parse_mode=ParseMode.HTML,
@@ -54,20 +54,14 @@ async def add_new_object(clbk: CallbackQuery, state: FSMContext):
 
 @router.callback_query(EmployeeObjects.filter(F.action == EmployeeObjectsAction.flats))
 async def get_flats(clbk:CallbackQuery, state:FSMContext):
-    print('all flats')
-    print('clbk.message.from_user.id', clbk.message.from_user.id)
-    print(clbk.message.chat.id)
-    flats = BotDB.get_all_flats_for_user(clbk.message.chat.id)
-    t1 = f"Все квартиры\n"
-    t2 = ''
-    for flat in flats:
-        t2 += f"{flat[1]} - цена {flat[3]}\n"
-    output_text = t1 +t2
+
     await clbk.message.answer(
-            text=output_text,
-            parse_mode=ParseMode.HTML,
-            #reply_markup=build_employee_type_objects_kb(),
-        )
+        text='Выберите пункт меню',
+        parse_mode=ParseMode.HTML,
+        reply_markup=build_flats_kb(),
+    )
+    await state.set_state(OrderEmployeeObjects.waiting_for_choice_flats_menu)
+
 
 @router.callback_query(EmployeeObjects.filter(F.action == EmployeeObjectsAction.cancel))
 async def cancel_objects_kb(clbk:CallbackQuery, state:FSMContext):

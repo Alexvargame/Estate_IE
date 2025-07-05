@@ -57,7 +57,8 @@ class District(models.Model):
         verbose_name_plural = 'Районы города'
 
     def __str__(self):
-        return f'{self.name}:{self.city}'
+        #return f'{self.name}:{self.city}'
+        return f"{self.name}"
 
 class BuildingType(models.Model):
 
@@ -88,26 +89,30 @@ class RepairState(models.Model):
         return self.name
 
 class Property(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    property_type = models.ForeignKey(PropertyType, related_name='property_types', on_delete=models.CASCADE, default=1)
-    property_category = models.ForeignKey(PropertyCategory, related_name='property_categories', on_delete=models.CASCADE)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
-    district = models.ForeignKey(District, related_name='districts', on_delete=models.CASCADE)
-    address = models.CharField(max_length=200)
-    total_area = models.DecimalField(max_digits=10, decimal_places=2)
-    living_area = models.DecimalField(max_digits=10, decimal_places=2)
-    rooms_count = models.IntegerField()
-    floor = models.IntegerField()
-    total_floor = models.IntegerField()
-    building_type = models.ForeignKey(BuildingType, related_name='building_types', on_delete=models.CASCADE)
-    has_balcony = models.BooleanField(default=0)
-    repair_state = models.ForeignKey(RepairState, related_name='repair_stetes', on_delete=models.CASCADE)
-    infrastructure = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=1)
-    employee = models.ForeignKey(BaseUser, related_name='employees', on_delete=models.CASCADE, default=1)
+    title = models.CharField(max_length=100, verbose_name="Название объявления", )
+    description = models.TextField(blank=True, null=True, verbose_name="Описание",)
+    property_type = models.ForeignKey(PropertyType, verbose_name="Тип объекта", related_name='property_types',
+                                      on_delete=models.CASCADE, default=1)
+    property_category = models.ForeignKey(PropertyCategory, verbose_name="Категория объекта", related_name='property_categories',
+                                          on_delete=models.CASCADE)
+    price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Цена",)
+    district = models.ForeignKey(District, related_name='districts', on_delete=models.CASCADE, verbose_name="Район города")
+    address = models.CharField(max_length=200, blank=True, null=True, verbose_name="Адрес",)
+    total_area = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Общая площадь",)
+    living_area = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Жилая площадь",)
+    rooms_count = models.IntegerField(verbose_name="Кол-во комнат")
+    floor = models.IntegerField(verbose_name="Этаж")
+    total_floor = models.IntegerField(verbose_name="Этажность")
+    building_type = models.ForeignKey(BuildingType, verbose_name="Материал стен", related_name='building_types',
+                                      on_delete=models.CASCADE)
+    repair_state = models.ForeignKey(RepairState, verbose_name="Ремонт", related_name='repair_stetes',
+                                     on_delete=models.CASCADE)
+    infrastructure = models.TextField(blank=True, null=True, verbose_name="Инфраструктура",)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создан",)
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Исправлен",)
+    is_active = models.BooleanField(default=1, verbose_name="Активность",)
+    employee = models.ForeignKey(BaseUser, verbose_name="Автор", related_name='employees',
+                                 on_delete=models.CASCADE, default=1)
 
 
     class Meta:
